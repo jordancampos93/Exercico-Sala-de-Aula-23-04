@@ -1,0 +1,75 @@
+import { useState, useEffect } from "react";
+
+function App() {
+  const [tasks, setTasks] = useState([]);
+  const [input, setInput] = useState("");
+
+  function addTask() {
+    if (input.trim() === "") return;
+
+    setTasks([...tasks, { text: input, done: false }]);
+    setInput("");
+  }
+
+  function removeTask(indexToRemove) {
+    const newTasks = tasks.filter((_, index) => index !== indexToRemove);
+    setTasks(newTasks);
+  }
+
+  function toggleTask(index) {
+    const newTasks = tasks.map((task, i) => {
+      if (i === index) {
+        return { ...task, done: !task.done };
+      }
+      return task;
+    });
+
+    setTasks(newTasks);
+  }
+
+  useEffect(() => {
+    console.log("Lista atualizada:", tasks);
+  }, [tasks]);
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>Lista de Tarefas</h1>
+
+      <input
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Digite uma tarefa"
+      />
+
+      <button onClick={addTask}>Adicionar</button>
+
+      <p>Total: {tasks.length}</p>
+      <p>Pendentes: {tasks.filter(task => !task.done).length}</p>
+
+      <ul>
+        {tasks.map((task, index) => (
+          <li
+            key={index}
+            style={{
+              textDecoration: task.done ? "line-through" : "none",
+              cursor: "pointer"
+            }}
+          >
+            <span onClick={() => toggleTask(index)}>
+              {task.text}
+            </span>
+
+            <button
+              onClick={() => removeTask(index)}
+              style={{ marginLeft: "10px" }}
+            >
+              X
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
